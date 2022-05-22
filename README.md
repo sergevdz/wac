@@ -1,2 +1,2 @@
-# rtchat
-Real-time chat app
+# wac
+Whatsapp clone
