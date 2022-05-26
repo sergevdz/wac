@@ -1,5 +1,15 @@
 import { Notify } from 'quasar'
 
+const $randomText = (length) => {
+  let result = ''
+  const characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  const charactersLength = characters.length
+  for (let i = 0; i < length; i++ ) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength))
+  }
+  return result
+}
+
 // Crea una notificacíon
 const $notify = (message, color = 'positive') => {
   return Notify.create({
@@ -95,5 +105,6 @@ export {
   $lockDecimals,
   $round,
   $filter,
-  $getCurrentExchangeRate
+  $getCurrentExchangeRate,
+  $randomText
 }
