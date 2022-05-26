@@ -18,9 +18,9 @@
         </div>
         <div class="row">
         <div class="col-sm-12" style="border: 1px solid #202c33;border-top: 0px">
-            <q-scroll-area style="height: 500px">
+          <q-scroll-area style="height: 500px">
             <q-list>
-                <q-item clickable>
+              <q-item clickable @click="showThisChat(1)">
                 <q-item-section top avatar>
                     <q-avatar>
                     <img src="https://cdn.quasar.dev/img/boy-avatar.png">
@@ -37,7 +37,7 @@
                 </q-item-section>
                 </q-item>
 
-                <q-item clickable>
+              <q-item clickable @click="showThisChat(2)">
                 <q-item-section top avatar>
                     <q-avatar>
                     <img src="https://cdn.quasar.dev/img/boy-avatar.png">
@@ -54,7 +54,7 @@
                 </q-item-section>
                 </q-item>
 
-                <q-item clickable>
+                <q-item clickable @click="showThisChat(3)">
                 <q-item-section top avatar>
                     <q-avatar>
                     <img src="https://cdn.quasar.dev/img/boy-avatar.png">
@@ -79,50 +79,24 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive } from 'vue'
-import { $randomText } from 'src/commons/utils'
-// import { useAuthStore } from 'stores/use-auth-store'
+import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
-  // eslint-disable-next-line vue/multi-word-component-names
-  name: 'Main',
-  setup() {
-    // const { getUser } = useAuthStore()
-    const chatMessage = ref('')
+  name: 'ChatPanel',
+  props: {
+    modelValue: Number
+  },
+  emits: ['update:modelValue'],
+  setup(props, ctx) {
+    const modelValue = ref(props.modelValue)
 
-    const mockChats = []
-    for (let index = 0; index < 5; index++) {
-      mockChats.push(
-        {
-          userName: $randomText(5),
-          text: [$randomText(15)],
-          sent: true
-        }
-      )
-    }
-
-    const chatEntities = reactive(mockChats)
-
-    const sendMessage = () => {
-      const msg = chatMessage.value
-      if (msg === '') {
-        return false
-      }
-      chatEntities.push(
-        {
-          userName: 'Yolo',
-          text: [chatMessage.value],
-          sent: true
-        }
-      )
-      chatMessage.value = ''
+    const showThisChat = (chatId: number) => {
+      modelValue.value = chatId
+      ctx.emit('update:modelValue', modelValue.value)
     }
 
     return {
-      // getUser
-      chatMessage,
-      chatEntities,
-      sendMessage
+      showThisChat
     }
   }
 })
