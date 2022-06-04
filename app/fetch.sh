@@ -1,0 +1,6 @@
+curl "http://localhost:3000/users/a329fdcd3b8f48ff8a3a0a38c775dfd2" -X DELETE -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101 Firefox/102.0" -H "Accept: application/json, text/plain, */*" -H "Accept-Language: es-MX,es;q=0.8,en-US;q=0.5,en;q=0.3" -H "Accept-Encoding: gzip, deflate, br" -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE2NTQzNTc4MDIsImp0aSI6InpOeVJMcUNTd0orQTVtUXhDcnNPV2k5WExMbTUzUTYwa2tSU2kxUjh1ZlU9IiwiaXNzIjoibG9jYWxob3N0OjgyMzkiLCJuYmYiOjE2NTQzNTc4MDIsImV4cCI6MTY1NDM3NTgwMiwiZGF0YSI6eyJ1c2VySWQiOjEsInJvbGVJZCI6MX19.jNNsnphmanyZzuMemEImvDf8LS2hC7j7hQhNzmsSpcZk94a3LrdEDwRwDir4c9F3W6CGsZjGz1CkQk4HYHfYgg" -H "Content-Type: application/x-www-form-urlencoded" -H "Origin: http://localhost:8080" -H "DNT: 1" -H "Connection: keep-alive" -H "Referer: http://localhost:8080/" -H "Sec-Fetch-Dest: empty" -H "Sec-Fetch-Mode: cors" -H "Sec-Fetch-Site: same-site" --data-raw "
+id=1804
+&empresa_clave=IN
+&etiquetas=Sin"%"20etiquetas"%"20registradas
+&categoria_id=4
+&__index=0"
