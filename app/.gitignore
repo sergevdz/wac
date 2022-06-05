@@ -1,13 +1,5 @@
-.DS_Store
-.thumbs.db
+## Dependencies
 node_modules
 
-# Log files
-npm-debug.log*
-
-# Editor directories and files
-.idea
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
+## Lock file(s)
+package-lock.json

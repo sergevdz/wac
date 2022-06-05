@@ -1,27 +1,19 @@
-// import http from "http";
-const http = require("http");
-// import express from "express";
-const express = require("express");
-// import logger from "morgan";
-const { logger } = require("morgan")
-// import cors from "cors";
-const cors = require("cors");
-
-// import * as socketio from 'socket.io'
-const socketio = require("socket.io");
-// mongo
-import "../config/mongo.js";
-
+import { createServer } from "http";
+import express from "express";
+import logger from "morgan";
+import cors from "cors";
+import { Server } from "socket.io";
+// mongo connection
+import "./config/mongo.js";
+// socket configuration
+import WebSockets from "./utils/WebSockets.js";
 // routes
 import indexRouter from "./routes/index.js";
 import userRouter from "./routes/user.js";
 import chatRoomRouter from "./routes/chatRoom.js";
 import deleteRouter from "./routes/delete.js";
-
 // middlewares
 import { decode } from './middlewares/jwt.js'
-
-import websockets from "./utils/websockets.js";
 
 const app = express();
 
@@ -47,14 +39,20 @@ app.use('*', (req, res) => {
 });
 
 /** Create HTTP server. */
-const server = http.createServer(app);
+const httpServer = createServer(app);
+/** Create socket connection */
+// global.io = socketio.listen(httpServer);
+
+global.io = new Server(httpServer, {});
+
+// global.io = httpServer.listen(port, host, () => {
+//   console.log(`Server is running on http://${host}:${port}`);
+// });
+
+global.io.on('connection', WebSockets.connection);
 /** Listen on provided port, on all network interfaces. */
-server.listen(port);
+httpServer.listen(port);
 /** Event listener for HTTP server "listening" event. */
-server.on("listening", () => {
+httpServer.on("listening", () => {
   console.log(`Listening on port:: http://localhost:${port}/`)
 });
-
-/** Create socket connection */
-global.io = socketio.listen(server);
-global.io.on('connection', websockets.connection);
