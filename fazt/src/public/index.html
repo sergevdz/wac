@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-<head></head>
+<head>
+  <title>Realtime chat</title>
+  <link rel="icon" type="image/x-icon" href="./favicon.ico">
+</head>
 <body>
   <!-- <h1>Hola</h1> -->
   <form id="noteForm">
@@ -8,6 +11,9 @@
     <textarea name="textare" id="description" cols="30" rows="10"></textarea>
     <button>Press me</button>
   </form>
+
+  <ul id="notes">
+  </ul>
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="./main.js" type="module"></script>
