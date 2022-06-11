@@ -11,6 +11,7 @@
 
 <script lang="ts">
 import { defineComponent, ref} from 'vue'
+// import { useRouter } from 'vue-router'
 import ChatPanel from 'src/components/ChatPanel.vue'
 import ChatView from 'src/components/ChatView.vue'
 
@@ -22,6 +23,16 @@ export default defineComponent({
     ChatView
   },
   setup() {
+    // const $router = useRouter()
+    // const jwt = localStorage.getItem('jwt')
+    // const jwtExists = Boolean(jwt)
+    // if (jwtExists) {
+    //   // TODO - Intentar cargar perfil
+    //   // TODO - Guardar perfil en store
+    // } else {
+    //   $router.push('/login')
+    // }
+
     const chatId = ref(-1)
 
     return {

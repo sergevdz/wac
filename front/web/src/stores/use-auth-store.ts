@@ -1,6 +1,8 @@
 import axios from 'axios'
 import { defineStore, acceptHMRUpdate } from 'pinia'
+// import { responseBody } from 'src/commons/request'
 import api from '../api'
+// import request from '../commons/request'
 
 interface User {
   id: number;
@@ -27,15 +29,19 @@ export const useAuthStore = defineStore({
 
   actions: {
     logIn: async (email: string, password: string) => {
-      const params = { email, password }
-      delete axios.defaults.headers.common['Authorization']
-      const authLogin = await api.auth.login(params)
-      if (authLogin) {
-        const jwt = authLogin?.jwt
-        localStorage.setItem('jwt', jwt)
-        axios.defaults.headers.common.Authorization = `Bearer ${jwt}`
+      try {
+        const params = { email, password }
+        delete axios.defaults.headers.common['Authorization']
+        const authLogin = await api.auth.login(params)
+        if (authLogin) {
+          const jwt = authLogin?.jwt
+          localStorage.setItem('jwt', jwt)
+          axios.defaults.headers.common.Authorization = `Bearer ${jwt}`
+        }
+        return authLogin
+      } catch (error) {
+        console.error(error)
       }
-      return authLogin
     },
     async getProfile() {
       const response = await api.auth.getProfile()

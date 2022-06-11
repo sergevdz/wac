@@ -26,6 +26,42 @@ export default boot(({ app }) => {
   /* app.config.globalProperties.$api = api; */
   // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)
   //       so you can easily perform requests against your app's API
+
+  // axios.interceptors.request.use(req => {
+  //   console.log(req)
+  // })
+
+  // axios.interceptors.response.use(response => {
+  //   const isValid = response.data instanceof Object || response.data instanceof Array
+  //   if (!isValid) {
+  //     console.info(response.request.responseURL, response)
+  //   }
+  //   return response
+  // }, error => {
+  //   console.info(error)
+  //   console.group()
+  //   if (error.response) {
+  //     if (error.response.status === 401) {
+  //       location.reload()
+  //     }
+  //     // The request was made and the server responded with a status code
+  //     // that falls out of the range of 2xx
+  //     console.error('Data: ', error.response.data)
+  //     console.error('Status: ', error.response.status)
+  //     console.error('Headers: ', error.response.headers)
+  //   } else if (error.request) {
+  //     // The request was made but no response was received
+  //     // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+  //     // http.ClientRequest in node.js
+  //     console.error('Request: ', error.request)
+  //   } else {
+  //     // Something happened in setting up the request that triggered an Error
+  //     console.error('Message: ', error.message)
+  //   }
+  //   console.error('Config: ', error.config)
+  //   console.groupEnd()
+  //   return Promise.reject(error)
+  // })
 })
 
 export { axios, api }
