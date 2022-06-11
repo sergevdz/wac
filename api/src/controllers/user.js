@@ -14,8 +14,12 @@ export default {
   },
   onUserLogIn: async (req, res) => {
     try {
+      console.log(req)
       const user = await User.getUserByName(req.body.username)
-      return res.status(200).json({ user })
+      return res.status(200).json({
+        user,
+        authorization: req.authToken,
+      })
     } catch (error) {
       return res.status(500).json({ result: false, error: error })
     }
