@@ -2,7 +2,8 @@
   <q-layout>
     <q-page-container style="background-color: #769fcd">
       <q-page>
-        <div class="row justify-center">
+        <sign-in v-if="canSignIn" @goBack="toggleShowSigIn($event)" />
+        <div v-else class="row justify-center">
           <div class="col-12 col-md-12 text-center">
             <h2>Login</h2>
           </div>
@@ -22,6 +23,14 @@
                   @click="onlogIn"
                   :loading="loading"
                 />
+                <br>
+                <br>
+                <q-btn
+                  color="orange"
+                  class="full-width"
+                  label="Crear usuario"
+                  @click="toggleShowSigIn(true)"
+                />
               </div>
             </div>
           </div>
@@ -36,6 +45,7 @@ import { defineComponent, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { $notify } from 'src/commons/utils'
 import { useAuthStore } from 'src/stores/use-auth-store'
+import SignIn from 'src/components/SignIn.vue'
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
@@ -51,6 +61,9 @@ export default defineComponent({
       next()
     }
   },
+  components: {
+    SignIn
+  },
   setup() {
     const $router = useRouter()
     const email = ref(process.env.USER_MAGIC_EMAIL)
@@ -59,6 +72,12 @@ export default defineComponent({
     const { getProfile, logIn } = useAuthStore()
 
     let loading = ref(false)
+
+    let canSignIn = ref(false) // No se necesita que sea reactiva. PRUBA
+
+    const toggleShowSigIn = (toggle: boolean) => {
+      canSignIn.value = toggle
+    }
 
     const onlogIn = async () => {
       if (email.value) {
@@ -89,7 +108,9 @@ export default defineComponent({
       email,
       password,
       onlogIn,
-      loading
+      loading,
+      toggleShowSigIn,
+      canSignIn
     }
   }
 })
