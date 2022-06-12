@@ -52,7 +52,7 @@ const schema = new Schema(
  schema.statics.getUserByName = async function (username) {
   try {
     const user = await this.findOne({ username: username });
-    if (!user) throw ({ error: 'No user with this name found' });
+    if (!user) throw ({ message: 'No user with this name found' });
     return user;
   } catch (error) {
     throw error;
@@ -67,7 +67,7 @@ const schema = new Schema(
  schema.statics.getValidUser = async function (email, password) {
   try {
     const user = await this.findOne({ email: email, password: password });
-    if (!user) throw ({ error: 'No user with this credentials found' });
+    if (!user) throw ({ message: 'No user with this credentials found' });
     return user;
   } catch (error) {
     throw error;

@@ -1,7 +1,7 @@
 import { axios } from 'boot/axios'
 import qs from 'qs'
 import { AxiosResponse } from 'axios'
-import ApiError from 'src/api/apierror'
+// import ApiError from 'src/api/apierror'
 
 export function responseBody(response: AxiosResponse) {
   return response.data
@@ -9,10 +9,11 @@ export function responseBody(response: AxiosResponse) {
 
 export function catchError(e) {
   const msg = e?.response?.data.error.message
-  throw new ApiError(msg)
+  // throw new ApiError(msg)
+  throw { message: msg }
 }
 
-const api = {
+const request = {
   get: (url: string, params) =>
     axios.get(url, {
       params: params,
@@ -28,4 +29,4 @@ const api = {
   stringify: (params) => qs.stringify(params)
 }
 
-export default api
+export default request

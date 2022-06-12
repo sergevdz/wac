@@ -1,10 +1,7 @@
-import request from 'src/commons/request.js'
-import { AxiosResponse } from 'axios'
-
-const responseBody = (response: AxiosResponse) => response.data
+import request, { responseBody, catchError } from 'src/commons/request'
 
 export default {
-  signin: (body) => request.post('auth/sign-in', body).then(responseBody),
-  login: (body) => request.post('auth/log-in', body).then(responseBody),
-  getProfile: (body) => request.get('auth/profile', body).then(responseBody)
+  signin: (body) => request.post('auth/sign-in', body).then(responseBody).catch(catchError),
+  login: (body) => request.post('auth/log-in', body).then(responseBody).catch(catchError)
+  // getProfile: (body) => request.get('auth/profile', body).then(responseBody)
 }

@@ -1,17 +1,16 @@
 import axios from 'axios'
 import { defineStore, acceptHMRUpdate } from 'pinia'
-// import { responseBody } from 'src/commons/request'
 import api from '../api'
-// import request from '../commons/request'
 
 interface User {
-  id: number;
+  _id: number;
+  name: string;
   email: string;
 }
 
 interface Auth {
   user: User;
-  wasLoaded: bolean;
+  token: string;
 }
 
 export const useAuthStore = defineStore({
@@ -19,12 +18,11 @@ export const useAuthStore = defineStore({
 
   state: (): Auth => ({
     user: null as User,
-    wasLoaded: false as boolean
+    token: null as string
   }),
 
   getters: {
-    getUser: (state) => state.user,
-    getWasLoaded: (state) => state.wasLoaded
+    getUser: (state) => state.user
   },
 
   actions: {
@@ -47,10 +45,12 @@ export const useAuthStore = defineStore({
       const response = await api.auth.getProfile()
       if (response) {
         this.user = response.data
-        this.wasLoaded = true
       }
       return response
     }
+    // async saveUser(user: User) {
+    //   this.user = user
+    // }
   }
 })
 

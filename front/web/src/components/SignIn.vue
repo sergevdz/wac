@@ -57,6 +57,7 @@ const goBack = () => {
 
 const onSignIn = async () => {
   const user = await api.auth.signin(userData)
+  console.log(user)
   if (user) {
     goBack()
   }

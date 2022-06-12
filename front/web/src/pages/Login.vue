@@ -46,6 +46,7 @@ import { useRouter } from 'vue-router'
 import { $notify } from 'src/commons/utils'
 import { useAuthStore } from 'src/stores/use-auth-store'
 import SignIn from 'src/components/SignIn.vue'
+import api from 'src/api'
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
@@ -80,28 +81,41 @@ export default defineComponent({
     }
 
     const onlogIn = async () => {
-      if (email.value) {
-      } else {
-        $notify('Por favor ingrese su email', 'warning')
-        return false
-      }
-      if (password.value) {
-      } else {
-        $notify('Por favor ingrese su contraseña', 'warning')
-        return false
-      }
-      loading.value = true
+      try {
+        if (email.value) {
+        } else {
+          $notify('Por favor ingrese su email', 'warning')
+          return false
+        }
+        if (password.value) {
+        } else {
+          $notify('Por favor ingrese su contraseña', 'warning')
+          return false
+        }
+        loading.value = true
 
-      await logIn(email.value, password.value)
-        .then( async response => {
-          if (response) {
-            await getProfile().then(() => {
-              $router.push('/dashboard')
-            })
-          }
-        })
-        .catch((error) => error)
-      loading.value = false
+        // await logIn(email.value, password.value)
+        //   .then( async response => {
+        //     // TODO - Guardar usuario y token en el estado
+        //     if (response) {
+        //       await getProfile().then(() => {
+        //         $router.push('/dashboard')
+        //       })
+        //     }
+        //   })
+        //   .catch((error) => error)
+        const params = { email: email.value, password: password.value }
+        const authLogin = await api.auth.login(params)
+        // if (authLogin) {
+        //   const jwt = authLogin?.jwt
+        //   localStorage.setItem('jwt', jwt)
+        //   axios.defaults.headers.common.Authorization = `Bearer ${jwt}`
+        // }
+        loading.value = false
+      } catch (error) {
+        loading.value = false
+        console.error(error)
+      }
     }
 
     return {
