@@ -30,12 +30,28 @@ export default {
 
       const { email, password } = req.body
       const user = await User.getValidUser(email, password)
+      if (!user) {
+        return res.status(401).json({
+          error: {
+            message: 'No se encontró un usuario con estas credenciales.'
+          }
+        })
+      }
+
       return res.status(200).json({
         user,
         authorization: req.authToken,
       })
     } catch (error) {
       return res.status(500).json({ result: false, error: error })
+    }
+  },
+  getLoggedUser: async (req, res) => {
+    try {
+      const user = await User.getLoggerUserById(req.userId)
+      return res.status(200).json({ user })
+    } catch (error) {
+      return res.status(500).json({ error })
     }
   }
 }
