@@ -11,5 +11,11 @@ const server = http.createServer(app);
 const httpServer = server.listen(API_PORT);
 console.log(`Server is running on port: ${API_PORT}`);
 
-const io = new WebsocketServer(httpServer);
+const io = new WebsocketServer(httpServer, {
+  cors: {
+      origin: '*'
+      // methods: ["GET", "POST"]
+    }
+  }
+);
 sockets(io);
