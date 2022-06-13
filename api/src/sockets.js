@@ -8,6 +8,8 @@ const messages = [
 
 export default (io) => {
   io.on('connection', (socket) => {
+    
+    // io.emit('newUserConnected')
     // const emitNotes = async () => {
     //   const notes = await Note.find()
     //   io.emit('server:loadnotes', notes)
@@ -34,6 +36,9 @@ export default (io) => {
     socket.on('addNewMessage', message => {
       messages.push(message)
       io.emit('loadMessages', messages)
+    })
+    socket.on('join', (userName) => {
+      io.emit('newUserConnected', userName)
     })
   })
 }

@@ -26,6 +26,7 @@ import { defineComponent, ref} from 'vue'
 // import ChatView from 'src/components/ChatView.vue'
 import { useAuthStore } from 'src/stores/use-auth-store'
 import { io } from 'socket.io-client'
+import { $notify } from 'src/commons/utils'
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
@@ -35,6 +36,7 @@ export default defineComponent({
     // ChatView
   },
   setup() {
+    const { getUser } = useAuthStore()
     const chatMessages = ref([])
     const messageText = ref('')
     // const socket = io()
@@ -44,16 +46,20 @@ export default defineComponent({
       //   token: "123"
       // },
       // query: {
-      //   "my-key": "my-value"
+      //   userName: getUser.name
       // }
     })
+    socket.emit('join', getUser.name)
     socket.on('loadMessages', (messages) => {
       if (messages) {
         chatMessages.value = messages
       }
     })
-
-    const { getUser } = useAuthStore()
+    socket.on('newUserConnected', (userName) => {
+      if (userName) {
+        $notify('New user connected: ' + userName)
+      }
+    })
 
     const onClick = () => {
       messageText
