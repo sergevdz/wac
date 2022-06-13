@@ -50,7 +50,7 @@ export default {
     try {
       res.set('Access-Control-Allow-Origin', '*')
       const user = await User.getLoggerUserById(req.userId)
-      return res.status(200).json({ user })
+      return res.status(200).json(user)
     } catch (error) {
       return res.status(500).json({ error })
     }

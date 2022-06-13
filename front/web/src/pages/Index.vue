@@ -1,28 +1,27 @@
 <template>
   <q-layout>
     <q-page-container class="" style="overflow-y: auto">
-      <pre>{{ getUser }}</pre>
-      <div class="row q-pa-md" style="height: calc( 100% - 138px);max-height: calc( 100% - 138px)">
+      <pre>Bienvenido: {{ getUser.name }}</pre>
+      <!-- <div class="row q-pa-md" style="height: calc( 100% - 138px);max-height: calc( 100% - 138px)">
         <chat-panel v-model="chatId" />
         <chat-view :key="chatId" />
-      </div>
+      </div> -->
     </q-page-container>
   </q-layout>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref} from 'vue'
-// import { useRouter } from 'vue-router'
-import ChatPanel from 'src/components/ChatPanel.vue'
-import ChatView from 'src/components/ChatView.vue'
+// import ChatPanel from 'src/components/ChatPanel.vue'
+// import ChatView from 'src/components/ChatView.vue'
 import { useAuthStore } from 'src/stores/use-auth-store'
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'Index',
   components: {
-    ChatPanel,
-    ChatView
+    // ChatPanel,
+    // ChatView
   },
   setup() {
     const { getUser } = useAuthStore()
