@@ -19,7 +19,6 @@ export default defineComponent({
       if (jwtExists) {
         const { storeUser } = useAuthStore()
         axios.defaults.headers.common.Authorization = `Bearer ${jwt}`
-        console.log(axios.defaults.headers.common)
         const loggedUser = await api.auth.getLoggedUser()
         if (loggedUser) {
           storeUser(loggedUser)

@@ -6,6 +6,16 @@
         <chat-panel v-model="chatId" />
         <chat-view :key="chatId" />
       </div> -->
+
+      <ul>
+        <li v-for="(msg, idx) in chatMessages" :key="idx">
+          <span>{{ msg.author}}: {{ msg.text}}</span>
+        </li>
+      </ul>
+      <br>
+      <br>
+      <q-input v-model="messageText" type="text" label="Label" />
+      <q-btn color="primary" icon="check" label="Enviar" @click="onClick" />
     </q-page-container>
   </q-layout>
 </template>
@@ -15,6 +25,7 @@ import { defineComponent, ref} from 'vue'
 // import ChatPanel from 'src/components/ChatPanel.vue'
 // import ChatView from 'src/components/ChatView.vue'
 import { useAuthStore } from 'src/stores/use-auth-store'
+import { io } from 'socket.io-client'
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
@@ -24,7 +35,38 @@ export default defineComponent({
     // ChatView
   },
   setup() {
+    const chatMessages = ref([])
+    const messageText = ref('')
+    // const socket = io()
+    const socket = io(process.env.API_WS, {
+      // reconnectionDelayMax: 10000
+      // auth: {
+      //   token: "123"
+      // },
+      // query: {
+      //   "my-key": "my-value"
+      // }
+    })
+    socket.on('loadMessages', (messages) => {
+      if (messages) {
+        chatMessages.value = messages
+      }
+    })
+
     const { getUser } = useAuthStore()
+
+    const onClick = () => {
+      messageText
+      const message = {
+        author: getUser.name,
+        text: messageText.value
+      }
+      socket.emit('addNewMessage', message)
+      messageText.value = ''
+    }
+    // messages.value.push({ author: '', text: 'tx'})
+    // messages.value.push({ author: '', text: 'tx2'})
+    // messages.value.push({ author: '', text: 'tx3'})
     // const $router = useRouter()
     // const jwt = localStorage.getItem('jwt')
     // const jwtExists = Boolean(jwt)
@@ -39,7 +81,10 @@ export default defineComponent({
 
     return {
       chatId,
-      getUser
+      getUser,
+      chatMessages,
+      messageText,
+      onClick
     }
   }
 })

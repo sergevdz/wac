@@ -72,6 +72,7 @@ module.exports = configure(function (/* ctx */) {
       // analyze: true,
       env: {
         API: env.API_LOCAL_URL,
+        API_WS: env.API_LOCAL_WS_URL,
         USER_MAGIC_EMAIL: env.USER_MAGIC_EMAIL,
         USER_MAGIC_PASSWORD: env.USER_MAGIC_PASSWORD
       },
