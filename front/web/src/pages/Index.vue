@@ -1,6 +1,7 @@
 <template>
   <q-layout>
     <q-page-container class="" style="overflow-y: auto">
+      <pre>{{ getUser }}</pre>
       <div class="row q-pa-md" style="height: calc( 100% - 138px);max-height: calc( 100% - 138px)">
         <chat-panel v-model="chatId" />
         <chat-view :key="chatId" />
@@ -14,6 +15,7 @@ import { defineComponent, ref} from 'vue'
 // import { useRouter } from 'vue-router'
 import ChatPanel from 'src/components/ChatPanel.vue'
 import ChatView from 'src/components/ChatView.vue'
+import { useAuthStore } from 'src/stores/use-auth-store'
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
@@ -23,6 +25,7 @@ export default defineComponent({
     ChatView
   },
   setup() {
+    const { getUser } = useAuthStore()
     // const $router = useRouter()
     // const jwt = localStorage.getItem('jwt')
     // const jwtExists = Boolean(jwt)
@@ -36,7 +39,8 @@ export default defineComponent({
     const chatId = ref(-1)
 
     return {
-      chatId
+      chatId,
+      getUser
     }
   }
 })

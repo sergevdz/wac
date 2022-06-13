@@ -47,10 +47,17 @@ export const useAuthStore = defineStore({
         this.user = response.data
       }
       return response
+    },
+    async storeUser(user: User) {
+      this.user = user
+    },
+    storeToken(token: string) {
+      localStorage.setItem('jwt', token)
+      axios.defaults.headers.common.Authorization = `Bearer ${token}`
+    },
+    removeStoken() {
+      localStorage.removeItem('jwt')
     }
-    // async saveUser(user: User) {
-    //   this.user = user
-    // }
   }
 })
 

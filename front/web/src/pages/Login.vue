@@ -51,12 +51,11 @@ import api from 'src/api'
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'Login',
-  beforeRouteEnter: async (to, from, next) => {
+  beforeRouteEnter: (to, from, next) => {
     const jwt = localStorage.getItem('jwt')
     const jwtExists = Boolean(jwt)
-
     if (jwtExists) {
-      next('/dashboard')
+      next('/')
     } else {
       // Se queda en LOGIN
       next()
@@ -69,8 +68,7 @@ export default defineComponent({
     const $router = useRouter()
     const email = ref(process.env.USER_MAGIC_EMAIL)
     const password = ref(process.env.USER_MAGIC_PASSWORD)
-    // const auth = useAuthStore()
-    const { getProfile, logIn } = useAuthStore()
+    const { storeUser, storeToken } = useAuthStore()
 
     let loading = ref(false)
 
@@ -94,27 +92,17 @@ export default defineComponent({
         }
         loading.value = true
 
-        // await logIn(email.value, password.value)
-        //   .then( async response => {
-        //     // TODO - Guardar usuario y token en el estado
-        //     if (response) {
-        //       await getProfile().then(() => {
-        //         $router.push('/dashboard')
-        //       })
-        //     }
-        //   })
-        //   .catch((error) => error)
         const params = { email: email.value, password: password.value }
         const authLogin = await api.auth.login(params)
-        // if (authLogin) {
-        //   const jwt = authLogin?.jwt
-        //   localStorage.setItem('jwt', jwt)
-        //   axios.defaults.headers.common.Authorization = `Bearer ${jwt}`
-        // }
-        loading.value = false
+        if (authLogin) {
+          storeUser(authLogin?.user)
+          storeToken(authLogin?.authorization)
+          $router.push('/')
+        }
       } catch (error) {
-        loading.value = false
         console.error(error)
+      } finally {
+        loading.value = false
       }
     }
 

@@ -7,31 +7,35 @@ import { defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
 import { axios } from 'boot/axios'
 import { useAuthStore } from 'src/stores/use-auth-store'
-
+import api from 'src/api'
 export default defineComponent({
   name: 'App',
   setup() {
-    const $router = useRouter()
-    const { getProfile } = useAuthStore()
+    const tryToLoad = async () => {
+      const $router = useRouter()
+      const jwt = localStorage.getItem('jwt')
+      const jwtExists = Boolean(jwt)
 
-    const jwt = localStorage.getItem('jwt')
-    const jwtExists = Boolean(jwt)
-    if (jwtExists) {
-      // Validar que el token sea válido y vigente cargando el perfil
-      axios.defaults.headers.common.Authorization = `Bearer ${jwt}`
-      getProfile()
-        .then(() => {
-          // Se queda en la ruta
-        })
-        .catch((error) => {
-          // Redirige a login
-          console.error(error)
+      if (jwtExists) {
+        const { storeUser } = useAuthStore()
+        axios.defaults.headers.common.Authorization = `Bearer ${jwt}`
+        console.log(axios.defaults.headers.common)
+        const loggedUser = await api.auth.getLoggedUser()
+        if (loggedUser) {
+          storeUser(loggedUser)
+          $router.push('/')
+        } else {
           localStorage.removeItem('jwt')
-          location.reload()
-        })
-    } else {
-      $router.push('/login')
+          // location.reload()
+          $router.push('/login')
+        }
+      } else {
+        localStorage.removeItem('jwt')
+        // location.reload()
+        $router.push('/login')
+      }
     }
+    tryToLoad()
   }
 })
 </script>
