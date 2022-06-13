@@ -48,6 +48,7 @@ export default {
   },
   getLoggedUser: async (req, res) => {
     try {
+      res.set('Access-Control-Allow-Origin', '*')
       const user = await User.getLoggerUserById(req.userId)
       return res.status(200).json({ user })
     } catch (error) {
