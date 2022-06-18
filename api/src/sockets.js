@@ -8,7 +8,7 @@ const messages = [
 
 export default (io) => {
   io.on('connection', (socket) => {
-    
+    console.log('New user has connected!: ', socket.id)
     // io.emit('newUserConnected')
     // const emitNotes = async () => {
     //   const notes = await Note.find()
