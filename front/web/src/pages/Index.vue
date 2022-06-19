@@ -9,13 +9,13 @@
 
       <ul>
         <li v-for="(msg, idx) in chatMessages" :key="idx">
-          <span>{{ msg.author}}: {{ msg.text}}</span>
+          <span style="font-weight:bold;">{{ msg.userId}}: </span><span>{{ msg.text}}</span>
         </li>
       </ul>
       <br>
       <br>
       <q-input v-model="messageText" type="text" label="Label" />
-      <q-btn color="primary" icon="check" label="Enviar" @click="onClick" />
+      <q-btn color="primary" icon="check" label="Enviar" @click="onClickSendMessage" />
     </q-page-container>
   </q-layout>
 </template>
@@ -49,7 +49,7 @@ export default defineComponent({
       //   userName: getUser.name
       // }
     })
-    socket.emit('join', getUser.name)
+    // socket.emit('join', getUser.name)
     socket.on('loadMessages', (messages) => {
       if (messages) {
         chatMessages.value = messages
@@ -61,27 +61,15 @@ export default defineComponent({
       }
     })
 
-    const onClick = () => {
+    const onClickSendMessage = () => {
       messageText
       const message = {
-        author: getUser.name,
+        userId: getUser._id,
         text: messageText.value
       }
       socket.emit('addNewMessage', message)
       messageText.value = ''
     }
-    // messages.value.push({ author: '', text: 'tx'})
-    // messages.value.push({ author: '', text: 'tx2'})
-    // messages.value.push({ author: '', text: 'tx3'})
-    // const $router = useRouter()
-    // const jwt = localStorage.getItem('jwt')
-    // const jwtExists = Boolean(jwt)
-    // if (jwtExists) {
-    //   // TODO - Intentar cargar perfil
-    //   // TODO - Guardar perfil en store
-    // } else {
-    //   $router.push('/login')
-    // }
 
     const chatId = ref(-1)
 
@@ -90,7 +78,7 @@ export default defineComponent({
       getUser,
       chatMessages,
       messageText,
-      onClick
+      onClickSendMessage
     }
   }
 })

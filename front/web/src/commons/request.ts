@@ -8,9 +8,13 @@ export function responseBody(response: AxiosResponse) {
 }
 
 export function catchError(e) {
-  const msg = e?.response?.data.error.message
-  // throw new ApiError(msg)
-  throw { message: msg }
+  try {
+    const msg = e?.response?.data.error.message || 'Error'
+    // throw new ApiError(msg)
+    throw { message: msg }
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 const request = {

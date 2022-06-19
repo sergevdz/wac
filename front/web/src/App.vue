@@ -2,39 +2,49 @@
   <router-view />
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+// import { defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
 import { axios } from 'boot/axios'
 import { useAuthStore } from 'src/stores/use-auth-store'
 import api from 'src/api'
-export default defineComponent({
-  name: 'App',
-  setup() {
-    const tryToLoad = async () => {
-      const $router = useRouter()
-      const jwt = localStorage.getItem('jwt')
-      const jwtExists = Boolean(jwt)
 
-      if (jwtExists) {
-        const { storeUser } = useAuthStore()
-        axios.defaults.headers.common.Authorization = `Bearer ${jwt}`
-        const loggedUser = await api.auth.getLoggedUser()
-        if (loggedUser) {
-          storeUser(loggedUser)
-          $router.push('/')
-        } else {
-          localStorage.removeItem('jwt')
-          // location.reload()
-          $router.push('/login')
-        }
-      } else {
-        localStorage.removeItem('jwt')
-        // location.reload()
-        $router.push('/login')
-      }
+// export default defineComponent({
+//   name: 'App',
+//   setup() {
+const $router = useRouter()
+/* try { */
+const logOut = () => {
+  localStorage.removeItem('jwt')
+  // location.reload()
+  $router.push('/login')
+}
+const tryToLoad = async () => {
+  const jwt = localStorage.getItem('jwt')
+  const jwtExists = Boolean(jwt)
+  if (jwtExists) {
+    const { storeUser } = useAuthStore()
+    axios.defaults.headers.common.Authorization = `Bearer ${jwt}`
+    const loggedUser = await api.auth.getLoggedUser()
+    if (loggedUser) {
+      storeUser(loggedUser)
+      $router.push('/')
+    } else {
+      logOut()
+      throw new Error('No se encontró el usuario')
     }
-    tryToLoad()
+  } else {
+    logOut()
+    throw new Error('No se encontró el token')
   }
-})
+}
+tryToLoad()
+/* } catch (error) {
+  console.log(error)
+  localStorage.removeItem('jwt')
+  // location.reload()
+  $router.push('/login')
+} */
+//   }
+// })
 </script>

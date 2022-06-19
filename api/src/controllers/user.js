@@ -37,7 +37,7 @@ export default {
           }
         })
       }
-
+      
       return res.status(200).json({
         user,
         authorization: req.authToken,

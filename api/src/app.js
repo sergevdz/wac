@@ -12,13 +12,6 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cors())
 
-// app.options('/*', function(req, res, next) {
-//   res.header('Access-Control-Allow-Origin', '*');
-//   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-//   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
-//   res.send(200);
-// });
-
 app.use('/', indexRouter)
 app.use('/auth', authRouter)
 // app.use('/users', userRouter)
@@ -26,9 +19,8 @@ app.use('/auth', authRouter)
 /** Catch 404 and forward to error handler */
 app.use('*', (req, res) => {
   return res.status(404).json({
-    error: {message: 'API endpoint doesnt exist'}
+    error:  { message: "API endpoint doesn't exist" }
   })
 })
-
 
 export default app;
