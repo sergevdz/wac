@@ -2,8 +2,9 @@ import express from 'express'
 // import path from 'path'
 import indexRouter from './routes/index'
 import authRouter from './routes/auth'
-// import userRouter from './routes/user'
+import chatRoomRouter from './routes/chat-room'
 import cors from 'cors'
+import { decode } from './middlewares/jwt'
 
 const app = express()
 
@@ -14,7 +15,7 @@ app.use(cors())
 
 app.use('/', indexRouter)
 app.use('/auth', authRouter)
-// app.use('/users', userRouter)
+app.use('/chat-rooms', decode, chatRoomRouter)
 
 /** Catch 404 and forward to error handler */
 app.use('*', (req, res) => {

@@ -1,6 +1,15 @@
 <template>
   <q-layout>
     <q-page-container class="" style="overflow-y: auto">
+      Salas
+      <div class="q-pa-md" style="max-width: 350px">
+        <q-list bordered separator>
+          <q-item clickable v-ripple v-for="(cr, idx) in chatRooms" :key="idx">
+            <q-item-section><span style="font-weight:bold;">{{ cr.name}}</span></q-item-section>
+          </q-item>
+        </q-list>
+      </div>
+
       <pre>Bienvenido: {{ getUser.name }}</pre>
       <!-- <div class="row q-pa-md" style="height: calc( 100% - 138px);max-height: calc( 100% - 138px)">
         <chat-panel v-model="chatId" />
@@ -27,6 +36,7 @@ import { defineComponent, ref} from 'vue'
 import { useAuthStore } from 'src/stores/use-auth-store'
 import { io } from 'socket.io-client'
 import { $notify } from 'src/commons/utils'
+import api from 'src/api'
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
@@ -39,6 +49,7 @@ export default defineComponent({
     const { getUser } = useAuthStore()
     const chatMessages = ref([])
     const messageText = ref('')
+    const chatRooms = ref([])
     // const socket = io()
     const socket = io(process.env.API_WS, {
       // reconnectionDelayMax: 10000
@@ -73,12 +84,18 @@ export default defineComponent({
 
     const chatId = ref(-1)
 
+    const getAllChatRooms = async () => {
+      chatRooms.value = await api.chatRooms.getAll()
+    }
+    getAllChatRooms()
+
     return {
       chatId,
       getUser,
       chatMessages,
       messageText,
-      onClickSendMessage
+      onClickSendMessage,
+      chatRooms
     }
   }
 })

@@ -6,7 +6,6 @@ export default (io) => {
 
     const emitMessages = async () => {
       const messages = await Message.getMessages()
-      console.log(messages)
       io.emit('loadMessages', messages)
     }
     emitMessages()
