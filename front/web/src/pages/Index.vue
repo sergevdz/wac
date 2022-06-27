@@ -1,11 +1,13 @@
 <template>
   <q-layout>
     <q-page-container class="" style="overflow-y: auto">
-      Salas
+      Salas {{ currentChatRoom.name }}
       <div class="q-pa-md" style="max-width: 350px">
         <q-list bordered separator>
-          <q-item clickable v-ripple v-for="(cr, idx) in chatRooms" :key="idx">
-            <q-item-section><span style="font-weight:bold;">{{ cr.name}}</span></q-item-section>
+          <q-item clickable v-ripple v-for="(cr, idx) in chatRooms" :key="idx" @click="setCurrentChatRoom(cr)">
+            <q-item-section>
+              <span style="font-weight:bold;">{{ cr.name }}</span>
+            </q-item-section>
           </q-item>
         </q-list>
       </div>
@@ -30,7 +32,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref} from 'vue'
+import { defineComponent, ref, reactive} from 'vue'
 // import ChatPanel from 'src/components/ChatPanel.vue'
 // import ChatView from 'src/components/ChatView.vue'
 import { useAuthStore } from 'src/stores/use-auth-store'
@@ -50,6 +52,11 @@ export default defineComponent({
     const chatMessages = ref([])
     const messageText = ref('')
     const chatRooms = ref([])
+    let currentChatRoom = reactive({
+      _id: null,
+      name: null,
+      roomId: null
+    })
     // const socket = io()
     const socket = io(process.env.API_WS, {
       // reconnectionDelayMax: 10000
@@ -76,7 +83,8 @@ export default defineComponent({
       messageText
       const message = {
         userId: getUser._id,
-        text: messageText.value
+        text: messageText.value,
+        roomId: currentChatRoom._id
       }
       socket.emit('addNewMessage', message)
       messageText.value = ''
@@ -89,13 +97,19 @@ export default defineComponent({
     }
     getAllChatRooms()
 
+    const setCurrentChatRoom = (room: object) => {
+      Object.assign(currentChatRoom, room)
+    }
+
     return {
       chatId,
       getUser,
       chatMessages,
       messageText,
       onClickSendMessage,
-      chatRooms
+      chatRooms,
+      currentChatRoom,
+      setCurrentChatRoom
     }
   }
 })

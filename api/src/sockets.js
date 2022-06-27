@@ -1,5 +1,5 @@
 import Message from './models/Message'
-
+import chatRoom from './controllers/chat-room'
 export default (io) => {
   io.on('connection', (socket) => {
     console.log('New user has connected!: ', socket.id)
@@ -11,12 +11,12 @@ export default (io) => {
     emitMessages()
 
     socket.on('addNewMessage', async (message) => {
-      const newMessage = new Message({
-        text: message.text,
-        userId: message.userId
-      })
-      await newMessage.save()
-      emitMessages()
+      try {
+        await chatRoom.createMessage(message)
+        emitMessages()
+      } catch (error) {
+        console.error(error)
+      }
     })
   })
 }
