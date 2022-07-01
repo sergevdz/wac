@@ -25,8 +25,13 @@
       </ul>
       <br>
       <br>
-      <q-input v-model="messageText" type="text" label="Label" />
-      <q-btn color="primary" icon="check" label="Enviar" @click="onClickSendMessage" />
+      <template v-if="currentChatRoom._id">
+        <q-input v-model="messageText" type="text" label="Label" />
+        <q-btn color="primary" icon="check" label="Enviar" @click="onClickSendMessage" />
+      </template>
+      <template v-else>
+        <span>Por favor seleccione una sala</span>
+      </template>
     </q-page-container>
   </q-layout>
 </template>
@@ -80,13 +85,16 @@ export default defineComponent({
     })
 
     const onClickSendMessage = () => {
+      if (currentChatRoom._id > 0) {} else {
+        return false
+      }
       messageText
       const message = {
-        userId: getUser._id,
         text: messageText.value,
-        roomId: currentChatRoom._id
+        userId: getUser._id
+        // roomId: currentChatRoom._id
       }
-      socket.emit('addNewMessage', message)
+      socket.emit('addNewMessage', currentChatRoom._id, message)
       messageText.value = ''
     }
 

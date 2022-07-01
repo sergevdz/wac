@@ -10,12 +10,12 @@ export default {
       return res.status(500).json({ error })
     }
   },
-  createMessage: async (message) => {
+  createMessage: async (roomId, message) => {
     try {
       // const message = req.message
-      const newMessage = new Message(message)
-      await newMessage.save()
-      const upadtedChatRoom = await ChatRoom.addNewMessage(message.roomId, newMessage._id)
+      // const newMessage = new Message(message)
+      // await newMessage.save()
+      const upadtedChatRoom = await ChatRoom.addNewMessage(roomId, message)
       console.log('se creo room', upadtedChatRoom)
       // return res.status(200).json(newMessage)
     } catch (error) {

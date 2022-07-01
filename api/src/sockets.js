@@ -10,9 +10,11 @@ export default (io) => {
     }
     emitMessages()
 
-    socket.on('addNewMessage', async (message) => {
+    socket.on('addNewMessage', async (roomId, message) => {
       try {
-        await chatRoom.createMessage(message)
+        // TODO - Validar que exista roomId y message
+        console.log(roomId, message)
+        await chatRoom.createMessage(roomId, message)
         emitMessages()
       } catch (error) {
         console.error(error)

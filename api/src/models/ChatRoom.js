@@ -1,4 +1,22 @@
 import { Schema, model } from "mongoose";
+// import Message from './Message'
+
+const Message = new Schema(
+  {
+    text: {
+      type: String,
+      required: true
+    },
+    userId: {
+      type: String,
+      required: true
+    },
+  },
+  {
+    timestamps: true,
+    collection: 'messages'
+  }
+);
 
 const schema = new Schema(
   {
@@ -10,9 +28,10 @@ const schema = new Schema(
       type: String,
       required: true
     },
-    messages: [
-      { type: Schema.Types.ObjectId, ref: 'Message' }
-    ]
+    messages: [Message]
+      // { type: Schema.Types.ObjectId, ref: 'Message' }
+      //{ type: [Message] }
+    // ]
   },
   {
     timestamps: true,
@@ -53,23 +72,16 @@ schema.statics.getChatRooms = async function () {
 
 /**
  * @param {String} chatRoomId - chat room id
- * @param {String} messageId - message id
+ * @param {String} message - message
  * @return {array} The updated chat room
  */
-schema.statics.addNewMessage = async function (chatRoomId, messageId) {
+schema.statics.addNewMessage = async function (chatRoomId, message) {
   try {
-    // const chatRoom = await this.updateOne(
-    //   { _id: this._id },
-    //   { $push: {
-    //     messages: messageId
-    //   }}
-    // )
-    // return chatRoom;
-    const updateData = this.updateMany(
+    const updateData = this.updateOne(
       { _id: chatRoomId },
       {
-        $addToSet: {
-          messages: messageId
+        $push: {
+          messages: message
         }
       }
     )
