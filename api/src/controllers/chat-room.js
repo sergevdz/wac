@@ -1,5 +1,4 @@
 import ChatRoom from '../models/ChatRoom'
-import Message from '../models/Message'
 
 export default {
   getAll: async (req, res) => {
@@ -12,14 +11,17 @@ export default {
   },
   createMessage: async (roomId, message) => {
     try {
-      // const message = req.message
-      // const newMessage = new Message(message)
-      // await newMessage.save()
       const upadtedChatRoom = await ChatRoom.addNewMessage(roomId, message)
-      console.log('se creo room', upadtedChatRoom)
-      // return res.status(200).json(newMessage)
+      return upadtedChatRoom
     } catch (error) {
-      // return res.status(500).json({ error })
+      console.error(error)
+    }
+  },
+  getMessages: async (roomId) => {
+    try {
+      const messages = await ChatRoom.getChatRoomsMessages(roomId)
+      return messages
+    } catch (error) {
       console.error(error)
     }
   }

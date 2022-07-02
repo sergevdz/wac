@@ -73,26 +73,28 @@ export default defineComponent({
       // }
     })
     // socket.emit('join', getUser.name)
-    socket.on('loadMessages', (messages) => {
+    /* socket.on('loadMessages', (messages) => {
       if (messages) {
         chatMessages.value = messages
       }
-    })
+    }) */
     socket.on('newUserConnected', (userName) => {
       if (userName) {
         $notify('New user connected: ' + userName)
       }
     })
+    const loadRoomMessage = () => {
+      socket.emit('requestMessageFromRoom', currentChatRoom._id)
+    }
 
     const onClickSendMessage = () => {
-      if (currentChatRoom._id > 0) {} else {
+      if (currentChatRoom._id) {} else {
         return false
       }
       messageText
       const message = {
         text: messageText.value,
         userId: getUser._id
-        // roomId: currentChatRoom._id
       }
       socket.emit('addNewMessage', currentChatRoom._id, message)
       messageText.value = ''
@@ -102,11 +104,22 @@ export default defineComponent({
 
     const getAllChatRooms = async () => {
       chatRooms.value = await api.chatRooms.getAll()
+      if (chatRooms.value) {
+        chatRooms.value.forEach(cr => {
+          socket.on('loadMessagesFromRoom' + cr._id, (messages) => {
+            console.log(cr._id, messages)
+            if (messages) {
+              chatMessages.value = messages
+            }
+          })
+        })
+      }
     }
     getAllChatRooms()
 
     const setCurrentChatRoom = (room: object) => {
       Object.assign(currentChatRoom, room)
+      loadRoomMessage()
     }
 
     return {

@@ -4,18 +4,26 @@ export default (io) => {
   io.on('connection', (socket) => {
     console.log('New user has connected!: ', socket.id)
 
-    const emitMessages = async () => {
-      const messages = await Message.getMessages()
-      io.emit('loadMessages', messages)
+    // Emite los mensajes de una sala
+    const emitRoomMessages = async (roomId) => {
+      const messages = await chatRoom.getMessages(roomId)
+      io.emit('loadMessagesFromRoom' + roomId, messages)
     }
-    emitMessages()
 
+    // Cuando un usuario agrega un mensaje
     socket.on('addNewMessage', async (roomId, message) => {
       try {
-        // TODO - Validar que exista roomId y message
-        console.log(roomId, message)
         await chatRoom.createMessage(roomId, message)
-        emitMessages()
+        emitRoomMessages(roomId)
+      } catch (error) {
+        console.error(error)
+      }
+    })
+
+    // Cuando un usuario accede a un room
+    socket.on('requestMessageFromRoom', async (roomId) => {
+      try {
+        emitRoomMessages(roomId)
       } catch (error) {
         console.error(error)
       }
