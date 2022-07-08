@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, Types } from 'mongoose';
 
 const validateEmail = function(email) {
   var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -82,6 +82,30 @@ const schema = new Schema(
   try {
     const user = await this.findOne({ _id: id });
     return user;
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * @param {String} id
+ * @return {Object} User object
+ */
+ schema.statics.getAllExceptMe = async function (id) {
+  try {
+    const users = await this.aggregate([
+      {
+        $match: { _id: {
+          $ne: Types.ObjectId(id)
+        } },
+      },
+      {
+        $project: {
+          password: 0
+        }
+      }
+    ]);
+    return users;
   } catch (error) {
     throw error;
   }

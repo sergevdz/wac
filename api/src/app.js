@@ -3,6 +3,8 @@ import express from 'express'
 import indexRouter from './routes/index'
 import authRouter from './routes/auth'
 import chatRoomRouter from './routes/chat-room'
+import usersRouter from './routes/users'
+
 import cors from 'cors'
 import { decode } from './middlewares/jwt'
 
@@ -16,6 +18,7 @@ app.use(cors())
 app.use('/', indexRouter)
 app.use('/auth', authRouter)
 app.use('/chat-rooms', decode, chatRoomRouter)
+app.use('/users', usersRouter)
 
 /** Catch 404 and forward to error handler */
 app.use('*', (req, res) => {

@@ -5,5 +5,6 @@ import { decode } from '../middlewares/jwt.js';
 const router = express.Router()
 
 router.get('/logged', decode, user.getLoggedUser)
+router.get('/', decode, user.getAllUsersExceptMe)
 
 export default router
