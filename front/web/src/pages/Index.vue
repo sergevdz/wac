@@ -1,6 +1,17 @@
 <template>
   <q-layout>
     <q-page-container class="" style="overflow-y: auto">
+      Contactos
+      <div class="q-pa-md" style="max-width: 350px">
+        <q-list bordered separator>
+          <q-item clickable v-ripple v-for="(usr, idx) in users" :key="idx">
+            <q-item-section>
+              <span style="font-weight:bold;">{{ usr.name }}</span>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </div>
+
       Salas {{ currentChatRoom.name }}
       <div class="q-pa-md" style="max-width: 350px">
         <q-list bordered separator>
@@ -122,6 +133,12 @@ export default defineComponent({
       loadRoomMessage()
     }
 
+    const users = ref([])
+    const getAllUsers = async () => {
+      users.value = await api.users.getAll({ excludingMe: 1 })
+    }
+    getAllUsers()
+
     return {
       chatId,
       getUser,
@@ -130,7 +147,8 @@ export default defineComponent({
       onClickSendMessage,
       chatRooms,
       currentChatRoom,
-      setCurrentChatRoom
+      setCurrentChatRoom,
+      users
     }
   }
 })

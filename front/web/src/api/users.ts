@@ -7,6 +7,6 @@ import request, { responseBody, catchError } from 'src/commons/request'
 
 export default {
   create: (body?) => request.post('users/', body).then(responseBody).catch(catchError), // .catch(console.info),
-  getAll: (body?) => request.get('users/', body).then(responseBody),
+  getAll: (params?) => request.get('users/', params).then(responseBody),
   get: (id: int) => request.get('users/' + id).then(responseBody)
 }
