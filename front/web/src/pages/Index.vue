@@ -3,8 +3,11 @@
     <q-page-container class="" style="overflow-y: auto">
       Contactos
       <div class="q-pa-md" style="max-width: 350px">
+        <!-- <q-input v-model="contacts.filter" type="text" label="Buscar" /> -->
+        {{ canShowModal }}
+        <q-btn color="primary" label="Agregar contacto" @click="toggleSearchContactsModal(true)" />
         <q-list bordered separator>
-          <q-item clickable v-ripple v-for="(usr, idx) in users" :key="idx">
+          <q-item clickable v-ripple v-for="(usr, idx) in contacts.users" :key="idx">
             <q-item-section>
               <span style="font-weight:bold;">{{ usr.name }}</span>
             </q-item-section>
@@ -43,6 +46,11 @@
       <template v-else>
         <span>Por favor seleccione una sala</span>
       </template>
+
+      <search-contacts-modal
+        :show="canShowModal"
+        @close="toggleSearchContactsModal(false)"
+      />
     </q-page-container>
   </q-layout>
 </template>
@@ -55,12 +63,13 @@ import { useAuthStore } from 'src/stores/use-auth-store'
 import { io } from 'socket.io-client'
 import { $notify } from 'src/commons/utils'
 import api from 'src/api'
+import SearchContactsModal from 'src/components/SearchContactsModal.vue'
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'Index',
   components: {
-    // ChatPanel,
+    SearchContactsModal
     // ChatView
   },
   setup() {
@@ -68,6 +77,7 @@ export default defineComponent({
     const chatMessages = ref([])
     const messageText = ref('')
     const chatRooms = ref([])
+    const canShowModal = ref(false)
     let currentChatRoom = reactive({
       _id: null,
       name: null,
@@ -133,11 +143,19 @@ export default defineComponent({
       loadRoomMessage()
     }
 
-    const users = ref([])
+    // const users = ref([])
+    const contacts = reactive({
+      users: [],
+      filter: ''
+    })
     const getAllUsers = async () => {
-      users.value = await api.users.getAll({ excludingMe: 1 })
+      contacts.users = await api.users.getAll({ excludingMe: 1 })
     }
     getAllUsers()
+
+    const toggleSearchContactsModal = (show: boolean) => {
+      canShowModal.value = show
+    }
 
     return {
       chatId,
@@ -148,7 +166,9 @@ export default defineComponent({
       chatRooms,
       currentChatRoom,
       setCurrentChatRoom,
-      users
+      contacts,
+      canShowModal,
+      toggleSearchContactsModal
     }
   }
 })
