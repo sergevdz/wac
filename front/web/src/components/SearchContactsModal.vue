@@ -2,18 +2,18 @@
   <q-dialog v-model="canShowModal">
     <q-card>
       <q-card-section>
-        <div class="text-h6">Alert</div>
+        <div class="text-h6">Agregar contacto</div>
       </q-card-section>
 
       <q-card-section class="q-pt-none">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum repellendus sit voluptate voluptas eveniet porro. Rerum blanditiis perferendis totam, ea at omnis vel numquam exercitationem aut, natus minima, porro labore.
+        <!-- Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum repellendus sit voluptate voluptas eveniet porro. Rerum blanditiis perferendis totam, ea at omnis vel numquam exercitationem aut, natus minima, porro labore. -->
         <q-input
           v-model="contacts.filter"
           type="text"
           label="Buscar"
           @keyup="onInputSearchUsers"
         />
-        <q-list bordered separator>
+        <q-list bordered separator style="max-height: 50vh">
           <q-item clickable v-ripple v-for="(usr, idx) in contacts.users" :key="idx">
             <q-item-section>
               <span style="font-weight:bold;">{{ usr.name }}</span>

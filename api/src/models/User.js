@@ -35,7 +35,7 @@ const schema = new Schema(
  * @param {String} id, user id
  * @return {Object} User object
  */
- schema.statics.getUserById = async function (id) {
+schema.statics.getUserById = async function (id) {
   try {
     const user = await this.findOne({ _id: id });
     if (!user) throw ({ error: 'No user with this id found' });
@@ -49,7 +49,7 @@ const schema = new Schema(
  * @param {String} username, user name
  * @return {Object} User object
  */
- schema.statics.getUserByName = async function (username) {
+schema.statics.getUserByName = async function (username) {
   try {
     const user = await this.findOne({ username: username });
     if (!user) throw ({ message: 'No user with this name found' });
@@ -64,7 +64,7 @@ const schema = new Schema(
  * @param {String} password
  * @return {Object} User object
  */
- schema.statics.getValidUser = async function (email, password) {
+schema.statics.getValidUser = async function (email, password) {
   try {
     const user = await this.findOne({ email: email, password: password });
     // if (!user) throw ({ message: 'No user with this credentials found' });
@@ -78,7 +78,7 @@ const schema = new Schema(
  * @param {String} id
  * @return {Object} User object
  */
- schema.statics.getLoggerUserById = async function (id) {
+schema.statics.getLoggerUserById = async function (id) {
   try {
     const user = await this.findOne({ _id: id });
     return user;
@@ -91,13 +91,22 @@ const schema = new Schema(
  * @param {String} id
  * @return {Object} User object
  */
- schema.statics.getAllExceptMe = async function (id) {
+schema.statics.getAllExceptMe = async function (params) {
   try {
+    const excludedUserId = params.excludedUserId || 0
+    const userName = params.userName || ''
+
+    const match = {}
+    if (excludedUserId) {
+      match._id = { $ne: Types.ObjectId(excludedUserId) }
+    }
+    if (userName) {
+      match.name = { $regex: userName, $options: 'i' }
+    }
+
     const users = await this.aggregate([
       {
-        $match: { _id: {
-          $ne: Types.ObjectId(id)
-        } },
+        $match: match,
       },
       {
         $project: {
