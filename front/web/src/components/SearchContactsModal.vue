@@ -8,15 +8,28 @@
       <q-card-section class="q-pt-none">
         <!-- Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum repellendus sit voluptate voluptas eveniet porro. Rerum blanditiis perferendis totam, ea at omnis vel numquam exercitationem aut, natus minima, porro labore. -->
         <q-input
-          v-model="contacts.filter"
+          v-model="filterUserName"
           type="text"
           label="Buscar"
           @keyup="onInputSearchUsers"
         />
+        <pre>{{ selectedContacts }}</pre>
         <q-list bordered separator style="max-height: 50vh">
-          <q-item clickable v-ripple v-for="(usr, idx) in contacts.users" :key="idx">
+          <q-item
+            clickable
+            v-ripple
+            v-for="(cToS, idx) in contactsToSelect"
+            :key="idx"
+            @click="cToS.isSelected = !cToS.isSelected"
+          >
+            <q-item-section side top>
+              <q-checkbox v-model="cToS.isSelected" />
+            </q-item-section>
             <q-item-section>
-              <span style="font-weight:bold;">{{ usr.name }}</span>
+              <q-item-label>{{ cToS.user.name }}</q-item-label>
+              <q-item-label caption>
+                {{ cToS.user.email }}
+              </q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
@@ -38,8 +51,11 @@ export default defineComponent({
   props: ['show'],
   emits: ['close'],
   setup(props, ctx) {
+    const filterUserName = ref('')
 
     const closeModal = () => {
+      filterUserName.value = ''
+      contactsToSelect.value = []
       ctx.emit('close')
     }
 
@@ -47,30 +63,37 @@ export default defineComponent({
       return props.show
     })
 
-    const contacts = reactive({
-      users: [],
-      filter: ''
-    })
+    const contactsToSelect = ref([])
 
     const getAllUsers = async () => {
-      const params = {
-        excludingMe: 1,
-        userName: contacts.filter
+      if (filterUserName.value) {} else {
+        return []
       }
-      contacts.users = await api.users.getAll(params)
+      const params = { excludingMe: 1, userName: filterUserName.value }
+      return api.users.getAll(params)
+    }
+
+    const loadContacts = async () => {
+      const users = await getAllUsers()
+      if (users) {
+        contactsToSelect.value = []
+        users.forEach(user => {
+          contactsToSelect.value.push({ isSelected: false, user: user })
+        })
+      }
     }
 
     const onInputSearchUsers = async () => {
-      console.log(contacts.filter)
       // TODO - Poner un timer de 200ms
-      await getAllUsers()
+      await loadContacts()
     }
 
     return {
       closeModal,
       canShowModal,
-      contacts,
-      onInputSearchUsers
+      filterUserName,
+      onInputSearchUsers,
+      contactsToSelect
     }
   }
 })
