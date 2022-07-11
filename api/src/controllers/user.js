@@ -72,9 +72,6 @@ export default {
     try {
       const userId = req.userId
       const contactIds = req.body.contactIds
-      console.log(req.body)
-      const obj = Object.assign({}, req.body)
-      console.log(2, obj.contactIds)
       const saved = await User.addContacts(userId, contactIds)
       return res.status(200).json(saved)
     } catch (error) {
