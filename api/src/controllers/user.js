@@ -48,7 +48,7 @@ export default {
   },
   getLoggedUser: async (req, res) => {
     try {
-      res.set('Access-Control-Allow-Origin', '*')
+      // res.set('Access-Control-Allow-Origin', '*')
       const user = await User.getLoggerUserById(req.userId)
       return res.status(200).json(user)
     } catch (error) {
@@ -64,6 +64,19 @@ export default {
       }
       const users = await User.getAllExceptMe(params)
       return res.status(200).json(users)
+    } catch (error) {
+      return res.status(500).json({ error })
+    }
+  },
+  addContacts: async (req, res) => {
+    try {
+      const userId = req.userId
+      const contactIds = req.body.contactIds
+      console.log(req.body)
+      const obj = Object.assign({}, req.body)
+      console.log(2, obj.contactIds)
+      const saved = await User.addContacts(userId, contactIds)
+      return res.status(200).json(saved)
     } catch (error) {
       return res.status(500).json({ error })
     }

@@ -23,6 +23,10 @@ const schema = new Schema(
       type: String,
       trim: true,
       required: 'Password is required',
+    },
+    contactIds: {
+      type: [Schema.Types.ObjectId],
+      ref: 'User'
     }
   },
   {
@@ -115,6 +119,28 @@ schema.statics.getAllExceptMe = async function (params) {
       }
     ]);
     return users;
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * @param {string} userId - user id
+ * @param {array} contactIds - contactIds
+ * @return {array} The updated chat room
+ */
+ schema.statics.addContacts = async function (userId, contactIds) {
+  try {
+    const updateData = this.updateOne(
+      { _id: userId },
+      {
+        // $push: {
+        $addToSet: {
+          contactIds: contactIds
+        }
+      }
+    )
+    return updateData
   } catch (error) {
     throw error;
   }

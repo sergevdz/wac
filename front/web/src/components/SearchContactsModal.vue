@@ -13,7 +13,6 @@
           label="Buscar"
           @keyup="onInputSearchUsers"
         />
-        <pre>{{ selectedContacts }}</pre>
         <q-list bordered separator style="max-height: 50vh">
           <q-item
             clickable
@@ -36,8 +35,8 @@
       </q-card-section>
 
       <q-card-actions align="right">
-        <!-- <q-btn flat label="OK" color="primary" v-close-popup /> -->
-        <q-btn flat label="OK" color="primary" @click="closeModal" />
+        <q-btn flat label="Cerrar" color="primary" @click="closeModal" />
+        <q-btn flat label="Agregar" color="primary" @click="addContacts" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -88,12 +87,26 @@ export default defineComponent({
       await loadContacts()
     }
 
+    const addContacts = () => {
+      const selectedContactIds = contactsToSelect.value.reduce((arr, cToS) => {
+        if (cToS.isSelected) {
+          arr.push(cToS.user._id)
+          return arr
+        }
+      }, [])
+      const params = {
+        contactIds: selectedContactIds
+      }
+      api.users.addContacts(params)
+    }
+
     return {
       closeModal,
       canShowModal,
       filterUserName,
       onInputSearchUsers,
-      contactsToSelect
+      contactsToSelect,
+      addContacts
     }
   }
 })
