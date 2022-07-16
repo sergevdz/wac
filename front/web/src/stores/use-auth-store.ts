@@ -22,7 +22,7 @@ export const useAuthStore = defineStore({
   }),
 
   getters: {
-    getUser: (state) => state.user
+    currentUser: (state) => state.user
   },
 
   actions: {

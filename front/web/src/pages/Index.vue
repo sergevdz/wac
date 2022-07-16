@@ -29,7 +29,7 @@
             </q-list>
           </div>
 
-          <pre>Bienvenido: {{ getUser.name }}</pre>
+          <pre>Bienvenido: {{ currentUser.name }}</pre>
           <!-- <div class="row q-pa-md" style="height: calc( 100% - 138px);max-height: calc( 100% - 138px)">
             <chat-panel v-model="chatId" />
             <chat-view :key="chatId" />
@@ -83,7 +83,7 @@ export default defineComponent({
   },
   setup() {
     const { removeStoken } = useAuthStore()
-    const { getUser } = useAuthStore()
+    const { currentUser } = useAuthStore()
     const chatMessages = ref([])
     const messageText = ref('')
     const chatRooms = ref([])
@@ -125,7 +125,7 @@ export default defineComponent({
       messageText
       const message = {
         text: messageText.value,
-        userId: getUser._id
+        userId: currentUser._id
       }
       socket.emit('addNewMessage', currentChatRoom._id, message)
       messageText.value = ''
@@ -173,7 +173,7 @@ export default defineComponent({
 
     return {
       chatId,
-      getUser,
+      currentUser,
       chatMessages,
       messageText,
       onClickSendMessage,

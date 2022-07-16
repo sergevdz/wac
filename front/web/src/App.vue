@@ -25,7 +25,7 @@ const tryToLoad = async () => {
   if (jwtExists) {
     const { storeUser } = useAuthStore()
     axios.defaults.headers.common.Authorization = `Bearer ${jwt}`
-    const loggedUser = await api.auth.getLoggedUser()
+    const loggedUser = await api.users.getLoggedUser()
     if (loggedUser) {
       storeUser(loggedUser)
       $router.push('/')
