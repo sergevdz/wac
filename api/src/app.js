@@ -10,10 +10,16 @@ import { decode } from './middlewares/jwt'
 
 const app = express()
 
+const logMe = (req, resp, next) => {
+  console.log(new Date().toISOString(), req.method, req.path);
+  next()
+}
+
 // app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cors())
+app.use(logMe)
 
 app.use('/', indexRouter)
 app.use('/auth', authRouter)

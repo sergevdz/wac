@@ -7,5 +7,6 @@ const router = express.Router()
 router.get('/logged', decode, user.getLoggedUser)
 router.get('/', decode, user.getAllUsersExceptMe)
 router.put('/contacts', decode, user.addContacts) // PUT /users/contacts
+router.get('/contacts', decode, user.getContacts) // GET /users/contacts
 
 export default router

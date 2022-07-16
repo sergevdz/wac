@@ -1,9 +1,9 @@
-import { Schema, model, Types } from 'mongoose';
+import { Schema, model, Types } from 'mongoose'
 
 const validateEmail = function(email) {
-  var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
   return re.test(email)
-};
+}
 
 const schema = new Schema(
   {
@@ -33,19 +33,50 @@ const schema = new Schema(
     timestamps: true,
     collection: 'users'
   }
-);
+)
 
 /**
- * @param {String} id, user id
+ * Devuelve la colección del usuario
+ * @param {String} id
  * @return {Object} User object
  */
 schema.statics.getUserById = async function (id) {
   try {
-    const user = await this.findOne({ _id: id });
-    if (!user) throw ({ error: 'No user with this id found' });
-    return user;
+    const user = await this.findOne({ _id: id })
+    return user
+    return user
   } catch (error) {
-    throw error;
+    throw error
+  }
+}
+
+/**
+ * Devuelve la coleción del usuario poblacion las referencias con objectos
+ * @param {String} id, user id
+ * @return {Object} User object
+ */
+schema.statics.getPopulatedUserById = async function (id) {
+  try {
+    const contactsInfo = {
+      $lookup: {
+        from: 'users',
+        localField: 'contactIds',
+        foreignField: '_id',
+        as: 'contactsInfo'
+      }
+    }
+    const user = await this.aggregate([
+      {
+        $match: { _id: Types.ObjectId(id) }
+      },
+      contactsInfo
+    ])
+    if (user) {
+      return user[0]
+    }
+  } catch (error) {
+    console.log(error)
+    throw error
   }
 }
 
@@ -55,11 +86,11 @@ schema.statics.getUserById = async function (id) {
  */
 schema.statics.getUserByName = async function (username) {
   try {
-    const user = await this.findOne({ username: username });
-    if (!user) throw ({ message: 'No user with this name found' });
-    return user;
+    const user = await this.findOne({ username: username })
+    if (!user) throw ({ message: 'No user with this name found' })
+    return user
   } catch (error) {
-    throw error;
+    throw error
   }
 }
 
@@ -70,24 +101,11 @@ schema.statics.getUserByName = async function (username) {
  */
 schema.statics.getValidUser = async function (email, password) {
   try {
-    const user = await this.findOne({ email: email, password: password });
-    // if (!user) throw ({ message: 'No user with this credentials found' });
-    return user;
+    const user = await this.findOne({ email: email, password: password })
+    // if (!user) throw ({ message: 'No user with this credentials found' })
+    return user
   } catch (error) {
-    throw error;
-  }
-}
-
-/**
- * @param {String} id
- * @return {Object} User object
- */
-schema.statics.getLoggerUserById = async function (id) {
-  try {
-    const user = await this.findOne({ _id: id });
-    return user;
-  } catch (error) {
-    throw error;
+    throw error
   }
 }
 
@@ -117,10 +135,10 @@ schema.statics.getAllExceptMe = async function (params) {
           password: 0
         }
       }
-    ]);
-    return users;
+    ])
+    return users
   } catch (error) {
-    throw error;
+    throw error
   }
 }
 
@@ -129,9 +147,9 @@ schema.statics.getAllExceptMe = async function (params) {
  * @param {array} contactIds - contactIds
  * @return {array} The updated chat room
  */
- schema.statics.addContacts = async function (userId, contactIds) {
+schema.statics.addContacts = async function (userId, contactIds) {
   try {
-    const updateData = this.updateOne(
+    const updateData = await this.updateOne(
       { _id: userId },
       {
         // $push: {
@@ -142,8 +160,32 @@ schema.statics.getAllExceptMe = async function (params) {
     )
     return updateData
   } catch (error) {
-    throw error;
+    throw error
   }
 }
 
-export default model('User', schema);
+schema.statics.getContacts = async function (userId) {
+  try {
+    const info = await this.aggregate([
+      {
+        $match: { _id: Types.ObjectId(userId) }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'contactIds',
+          foreignField: '_id',
+          as: 'contactsInfo'
+        }
+      }
+    ])
+    if (info) {
+      return info[0]
+    }
+    return info
+  } catch (error) {
+    throw error
+  }
+}
+
+export default model('User', schema)
