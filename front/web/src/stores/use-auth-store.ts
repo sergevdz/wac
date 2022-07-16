@@ -57,6 +57,7 @@ export const useAuthStore = defineStore({
     },
     removeStoken() {
       localStorage.removeItem('jwt')
+      window.location.reload()
     }
   }
 })

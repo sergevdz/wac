@@ -1,51 +1,59 @@
 <template>
   <q-layout>
     <q-page-container class="" style="overflow-y: auto">
-      Contactos
-      <div class="q-pa-md" style="max-width: 350px">
-        <!-- <q-input v-model="contacts.filter" type="text" label="Buscar" /> -->
-        {{ canShowModal }}
-        <q-btn color="primary" label="Agregar contacto" @click="toggleSearchContactsModal(true)" />
-        <q-list bordered separator>
-          <q-item clickable v-ripple v-for="(usr, idx) in contacts.users" :key="idx">
-            <q-item-section>
-              <span style="font-weight:bold;">{{ usr.name }}</span>
-            </q-item-section>
-          </q-item>
-        </q-list>
+      <div class="row">
+        <div class="col-sm-10 debug">
+          Contactos
+          <div class="q-pa-md" style="max-width: 350px">
+            <!-- <q-input v-model="contacts.filter" type="text" label="Buscar" /> -->
+            <q-btn color="primary" label="Agregar contacto" @click="toggleSearchContactsModal(true)" />
+            <br>
+            <br>
+            <q-list bordered separator>
+              <q-item clickable v-ripple v-for="(usr, idx) in contacts.users" :key="idx">
+                <q-item-section>
+                  <span style="font-weight:bold;">{{ usr.name }}</span>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </div>
+
+          Salas {{ currentChatRoom.name }}
+          <div class="q-pa-md" style="max-width: 350px">
+            <q-list bordered separator>
+              <q-item clickable v-ripple v-for="(cr, idx) in chatRooms" :key="idx" @click="setCurrentChatRoom(cr)">
+                <q-item-section>
+                  <span style="font-weight:bold;">{{ cr.name }}</span>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </div>
+
+          <pre>Bienvenido: {{ getUser.name }}</pre>
+          <!-- <div class="row q-pa-md" style="height: calc( 100% - 138px);max-height: calc( 100% - 138px)">
+            <chat-panel v-model="chatId" />
+            <chat-view :key="chatId" />
+          </div> -->
+
+          <ul>
+            <li v-for="(msg, idx) in chatMessages" :key="idx">
+              <span style="font-weight:bold;">{{ msg.userId}}: </span><span>{{ msg.text}}</span>
+            </li>
+          </ul>
+          <br>
+          <br>
+          <template v-if="currentChatRoom._id">
+            <q-input v-model="messageText" type="text" label="Label" />
+            <q-btn color="primary" icon="check" label="Enviar" @click="onClickSendMessage" />
+          </template>
+          <template v-else>
+            <span>Por favor seleccione una sala</span>
+          </template>
+        </div>
+        <div class="col-sm-2 debug">
+          <q-btn color="primary" icon="check" label="Salir" @click="onClickLogout" />
+        </div>
       </div>
-
-      Salas {{ currentChatRoom.name }}
-      <div class="q-pa-md" style="max-width: 350px">
-        <q-list bordered separator>
-          <q-item clickable v-ripple v-for="(cr, idx) in chatRooms" :key="idx" @click="setCurrentChatRoom(cr)">
-            <q-item-section>
-              <span style="font-weight:bold;">{{ cr.name }}</span>
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </div>
-
-      <pre>Bienvenido: {{ getUser.name }}</pre>
-      <!-- <div class="row q-pa-md" style="height: calc( 100% - 138px);max-height: calc( 100% - 138px)">
-        <chat-panel v-model="chatId" />
-        <chat-view :key="chatId" />
-      </div> -->
-
-      <ul>
-        <li v-for="(msg, idx) in chatMessages" :key="idx">
-          <span style="font-weight:bold;">{{ msg.userId}}: </span><span>{{ msg.text}}</span>
-        </li>
-      </ul>
-      <br>
-      <br>
-      <template v-if="currentChatRoom._id">
-        <q-input v-model="messageText" type="text" label="Label" />
-        <q-btn color="primary" icon="check" label="Enviar" @click="onClickSendMessage" />
-      </template>
-      <template v-else>
-        <span>Por favor seleccione una sala</span>
-      </template>
 
       <search-contacts-modal
         :show="canShowModal"
@@ -64,6 +72,7 @@ import { io } from 'socket.io-client'
 import { $notify } from 'src/commons/utils'
 import api from 'src/api'
 import SearchContactsModal from 'src/components/SearchContactsModal.vue'
+import { useAuthStore } from 'src/stores/use-auth-store'
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
@@ -73,6 +82,7 @@ export default defineComponent({
     // ChatView
   },
   setup() {
+    const { removeStoken } = useAuthStore()
     const { getUser } = useAuthStore()
     const chatMessages = ref([])
     const messageText = ref('')
@@ -157,6 +167,10 @@ export default defineComponent({
       canShowModal.value = show
     }
 
+    const onClickLogout = () => {
+      removeStoken()
+    }
+
     return {
       chatId,
       getUser,
@@ -168,7 +182,8 @@ export default defineComponent({
       setCurrentChatRoom,
       contacts,
       canShowModal,
-      toggleSearchContactsModal
+      toggleSearchContactsModal,
+      onClickLogout
     }
   }
 })
