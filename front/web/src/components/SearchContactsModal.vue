@@ -43,14 +43,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, reactive } from 'vue'
+import { defineComponent, ref, computed, reactive, Ref } from 'vue'
 import api from 'src/api'
+interface User {
+  _id: string
+}
+
+interface SelectContact {
+  isSelected: boolean,
+  user: User
+}
 export default defineComponent({
   name: 'SearchContactsModal',
   props: ['show'],
   emits: ['close'],
   setup(props, ctx) {
     const filterUserName = ref('')
+    const contactsToSelect: Ref<SelectContact[]> = ref([])
 
     const closeModal = () => {
       filterUserName.value = ''
@@ -61,8 +70,6 @@ export default defineComponent({
     const canShowModal = computed(() => {
       return props.show
     })
-
-    const contactsToSelect = ref([])
 
     const getAllUsers = async () => {
       if (filterUserName.value) {} else {
@@ -87,17 +94,18 @@ export default defineComponent({
       await loadContacts()
     }
 
-    const addContacts = () => {
-      const selectedContactIds = contactsToSelect.value.reduce((arr, cToS) => {
-        if (cToS.isSelected) {
-          arr.push(cToS.user._id)
-          return arr
-        }
-      }, [])
+    const addContacts = async () => {
+      const selectedContactIds = contactsToSelect.value
+        .filter(val => val.isSelected)
+        .reduce((opt, val) => {
+          opt.push(val.user._id)
+          return opt
+        }, [])
       const params = {
         contactIds: selectedContactIds
       }
-      api.users.addContacts(params)
+      const result = await api.users.addContacts(params)
+      closeModal()
     }
 
     return {

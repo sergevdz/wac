@@ -2,7 +2,7 @@
   <q-layout>
     <q-page-container class="" style="overflow-y: auto">
       <div class="row">
-        <div class="col-sm-10 debug">
+        <div class="col-sm-3 debug">
           Contactos
           <div class="q-pa-md" style="max-width: 350px">
             <!-- <q-input v-model="contacts.filter" type="text" label="Buscar" /> -->
@@ -10,7 +10,7 @@
             <br>
             <br>
             <q-list bordered separator>
-              <q-item clickable v-ripple v-for="(usr, idx) in contacts.users" :key="idx">
+              <q-item clickable v-ripple v-for="(usr, idx) in myCurrentUser.contactsInfo" :key="idx">
                 <q-item-section>
                   <span style="font-weight:bold;">{{ usr.name }}</span>
                 </q-item-section>
@@ -28,13 +28,9 @@
               </q-item>
             </q-list>
           </div>
-
-          <pre>Bienvenido: {{ currentUser.name }}</pre>
-          <!-- <div class="row q-pa-md" style="height: calc( 100% - 138px);max-height: calc( 100% - 138px)">
-            <chat-panel v-model="chatId" />
-            <chat-view :key="chatId" />
-          </div> -->
-
+        </div>
+        <div class="col-sm-7 debug">
+          <pre>Bienvenido: {{ myCurrentUser.name }}</pre>
           <ul>
             <li v-for="(msg, idx) in chatMessages" :key="idx">
               <span style="font-weight:bold;">{{ msg.userId}}: </span><span>{{ msg.text}}</span>
@@ -83,7 +79,8 @@ export default defineComponent({
   },
   setup() {
     const { removeStoken } = useAuthStore()
-    const { currentUser } = useAuthStore()
+    const { currentUser, storeUser } = useAuthStore()
+    const myCurrentUser = ref(currentUser)
     const chatMessages = ref([])
     const messageText = ref('')
     const chatRooms = ref([])
@@ -154,17 +151,25 @@ export default defineComponent({
     }
 
     // const users = ref([])
-    const contacts = reactive({
-      users: [],
-      filter: ''
-    })
-    const getAllUsers = async () => {
-      contacts.users = await api.users.getAll({ excludingMe: 1 })
+    // const contacts = reactive({
+    //   users: [],
+    //   filter: ''
+    // })
+    // const getAllUsers = async () => {
+    //   contacts.users = await api.users.getAll({ excludingMe: 1 })
+    // }
+    // getAllUsers()
+
+    const reloadUserInfo = async () => {
+      const user = await api.users.getLoggedUser()
+      storeUser(user)
     }
-    getAllUsers()
 
     const toggleSearchContactsModal = (show: boolean) => {
       canShowModal.value = show
+      if (!show) {
+        reloadUserInfo()
+      }
     }
 
     const onClickLogout = () => {
@@ -173,14 +178,14 @@ export default defineComponent({
 
     return {
       chatId,
-      currentUser,
+      myCurrentUser,
       chatMessages,
       messageText,
       onClickSendMessage,
       chatRooms,
       currentChatRoom,
       setCurrentChatRoom,
-      contacts,
+      // contacts,
       canShowModal,
       toggleSearchContactsModal,
       onClickLogout
