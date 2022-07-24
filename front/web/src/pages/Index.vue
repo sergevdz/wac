@@ -161,16 +161,6 @@ export default defineComponent({
       loadRoomMessage()
     }
 
-    // const users = ref([])
-    // const contacts = reactive({
-    //   users: [],
-    //   filter: ''
-    // })
-    // const getAllUsers = async () => {
-    //   contacts.users = await api.users.getAll({ excludingMe: 1 })
-    // }
-    // getAllUsers()
-
     const reloadUserInfo = async () => {
       const user = await api.users.getLoggedUser()
       storeUser(user)
@@ -189,7 +179,7 @@ export default defineComponent({
 
     const onItemClickDeleteContact = async (id) => {
       const result = await api.users.deleteContact(id)
-      console.log(result)
+      reloadUserInfo()
     }
 
     return {

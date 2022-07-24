@@ -188,4 +188,20 @@ schema.statics.getContacts = async function (userId) {
   }
 }
 
+ schema.statics.deleteContact = async function (id, contactId) {
+  try {
+    const updateData = await this.updateOne(
+      { _id: id },
+      {        
+        $pull: {
+          contactIds: { $eq: Types.ObjectId(contactId)}
+        }
+      }
+    )
+    return updateData
+  } catch (error) {
+    throw error
+  }
+}
+
 export default model('User', schema)

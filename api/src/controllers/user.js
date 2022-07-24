@@ -41,5 +41,13 @@ export default {
     } catch (error) {
       return res.status(500).json({ error })
     }
+  },
+  deleteContact: async (req, res) => {
+    try {
+      const contacts = await User.deleteContact(req.userId, req.params.contactId)
+      return res.status(200).json(contacts)
+    } catch (error) {
+      return res.status(500).json({ error })
+    }
   }
 }
