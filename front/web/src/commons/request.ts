@@ -25,7 +25,7 @@ const request = {
     }),
   post: (url: string, params) => axios.post(url, qs.stringify(params)),
   put: (url: string, params) => axios.put(url, qs.stringify(params)),
-  delete: (url: string, params) => axios.delete(url, qs.stringify(params)),
+  delete: (url: string) => axios.delete(url),
   file: (url: string, params) =>
     axios.post(url, params, {
       headers: { 'Content-Type': 'multipart/form-data' }

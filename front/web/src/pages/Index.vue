@@ -14,6 +14,17 @@
                 <q-item-section>
                   <span style="font-weight:bold;">{{ usr.name }}</span>
                 </q-item-section>
+                <q-item-section top side>
+                  <q-btn-dropdown color="primary">
+                    <q-list>
+                      <q-item clickable v-close-popup @click="onItemClickDeleteContact(usr._id)">
+                        <q-item-section>
+                          <q-item-label>Delete</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-btn-dropdown>
+                </q-item-section>
               </q-item>
             </q-list>
           </div>
@@ -176,6 +187,11 @@ export default defineComponent({
       removeStoken()
     }
 
+    const onItemClickDeleteContact = async (id) => {
+      const result = await api.users.deleteContact(id)
+      console.log(result)
+    }
+
     return {
       chatId,
       myCurrentUser,
@@ -188,6 +204,7 @@ export default defineComponent({
       // contacts,
       canShowModal,
       toggleSearchContactsModal,
+      onItemClickDeleteContact,
       onClickLogout
     }
   }
