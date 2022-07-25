@@ -30,7 +30,6 @@ export default {
 
       const { email, password } = req.body
       const validUser = await User.getValidUser(email, password)
-      console.log(validUser)
       let user = null
       if (validUser) {
         user = await User.getPopulatedUserById(validUser._id)

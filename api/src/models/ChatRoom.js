@@ -1,5 +1,4 @@
 import { Schema, model } from "mongoose";
-// import Message from './Message'
 
 const Message = new Schema(
   {
@@ -25,7 +24,10 @@ const schema = new Schema(
       required: true
     },
     messages: [Message],
-    users: { type: Schema.Types.ObjectId, ref: 'User' }
+    userIds: {
+      type: [Schema.Types.ObjectId],
+      ref: 'User'
+    }
   },
   {
     timestamps: true,
@@ -73,6 +75,20 @@ schema.statics.addNewMessage = async function (chatRoomId, message) {
       }
     )
     return updateData
+  } catch (error) {
+    throw error;
+  }
+}
+
+ schema.statics.createNewChat = async function (userIds) {
+  try {
+    const name = (Math.random() + 1).toString(36).substring(7)
+    const data = {
+      name: name,
+      users: userIds
+    }
+    const insertData = await this.insertOne(data)
+    return insertData
   } catch (error) {
     throw error;
   }

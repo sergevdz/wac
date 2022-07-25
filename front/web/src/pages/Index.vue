@@ -6,7 +6,8 @@
           Contactos
           <div class="q-pa-md" style="max-width: 350px">
             <!-- <q-input v-model="contacts.filter" type="text" label="Buscar" /> -->
-            <q-btn color="primary" label="Agregar contacto" @click="toggleSearchContactsModal(true)" />
+            <!-- <q-btn color="primary" label="Agregar contacto" @click="toggleSearchContactsModal(true)" /> -->
+            <q-btn color="primary" label="Iniciar chat" @click="toggleStartRoomModal(true)" />
             <br>
             <br>
             <q-list bordered separator>
@@ -29,7 +30,7 @@
             </q-list>
           </div>
 
-          Salas {{ currentChatRoom.name }}
+          Conversaciones {{ currentChatRoom.name }}
           <div class="q-pa-md" style="max-width: 350px">
             <q-list bordered separator>
               <q-item clickable v-ripple v-for="(cr, idx) in chatRooms" :key="idx" @click="setCurrentChatRoom(cr)">
@@ -66,6 +67,11 @@
         :show="canShowModal"
         @close="toggleSearchContactsModal(false)"
       />
+
+      <start-room-modal
+        :show="canShowStartRoomModal"
+        @close="toggleStartRoomModal(false)"
+      />
     </q-page-container>
   </q-layout>
 </template>
@@ -79,14 +85,15 @@ import { io } from 'socket.io-client'
 import { $notify } from 'src/commons/utils'
 import api from 'src/api'
 import SearchContactsModal from 'src/components/SearchContactsModal.vue'
+import StartRoomModal from 'src/components/StartRoomModal.vue'
 import { useAuthStore } from 'src/stores/use-auth-store'
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'Index',
   components: {
-    SearchContactsModal
-    // ChatView
+    SearchContactsModal,
+    StartRoomModal
   },
   setup() {
     const { removeStoken } = useAuthStore()
@@ -96,6 +103,7 @@ export default defineComponent({
     const messageText = ref('')
     const chatRooms = ref([])
     const canShowModal = ref(false)
+    const canShowStartRoomModal = ref(false)
     let currentChatRoom = reactive({
       _id: null,
       name: null,
@@ -173,12 +181,16 @@ export default defineComponent({
       }
     }
 
+    const toggleStartRoomModal = (show: boolean) => {
+      canShowStartRoomModal.value = show
+    }
+
     const onClickLogout = () => {
       removeStoken()
     }
 
     const onItemClickDeleteContact = async (id) => {
-      const result = await api.users.deleteContact(id)
+      await api.users.deleteContact(id)
       reloadUserInfo()
     }
 
@@ -195,7 +207,10 @@ export default defineComponent({
       canShowModal,
       toggleSearchContactsModal,
       onItemClickDeleteContact,
-      onClickLogout
+      onClickLogout,
+      // Start room
+      canShowStartRoomModal,
+      toggleStartRoomModal
     }
   }
 })
