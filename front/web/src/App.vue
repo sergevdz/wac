@@ -3,20 +3,15 @@
 </template>
 
 <script setup lang="ts">
-// import { defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
 import { axios } from 'boot/axios'
 import { useAuthStore } from 'src/stores/use-auth-store'
 import api from 'src/api'
 
-// export default defineComponent({
-//   name: 'App',
-//   setup() {
 const $router = useRouter()
-/* try { */
+
 const logOut = () => {
   localStorage.removeItem('jwt')
-  // location.reload()
   $router.push('/login')
 }
 const tryToLoad = async () => {
@@ -39,12 +34,4 @@ const tryToLoad = async () => {
   }
 }
 tryToLoad()
-/* } catch (error) {
-  console.log(error)
-  localStorage.removeItem('jwt')
-  // location.reload()
-  $router.push('/login')
-} */
-//   }
-// })
 </script>

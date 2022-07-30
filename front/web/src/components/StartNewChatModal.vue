@@ -2,7 +2,7 @@
   <q-dialog v-model="canShowModal">
     <q-card>
       <q-card-section>
-        <div class="text-h6">Buscar contactos</div>
+        <div class="text-h6">Iniciar nuevo chat</div>
       </q-card-section>
 
       <q-card-section class="q-pt-none">
@@ -53,7 +53,7 @@ interface SelectContact {
   user: User
 }
 export default defineComponent({
-  name: 'StartRoomModal',
+  name: 'StartNewChatModal',
   props: ['show'],
   emits: ['close'],
   setup(props, ctx) {
