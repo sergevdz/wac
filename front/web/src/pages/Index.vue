@@ -1,21 +1,45 @@
 <template>
   <q-layout>
     <q-page-container class="" style="overflow-y: auto">
+      <!-- HEADER -->
       <div class="row">
-        <div class="col-sm-10 debug">
+        <div class="col-sm-10">
           <pre>Bienvenido: {{ myCurrentUser.name }}</pre>
         </div>
-        <div class="col-sm-2 debug">
+        <div class="col-sm-2 q-pa-xs text-right">
           <q-btn color="primary" icon="check" label="Salir" @click="onClickLogout" />
         </div>
       </div>
       <div class="row">
+        <!-- DRAWER -->
         <div class="col-sm-3 debug">
-          Conversaciones {{ currentChatRoom.name }}
-          <q-btn color="primary" label="Iniciar chat" @click="toggleStartRoomModal(true)" />
+          <div class="row">
+            <div class="col-sm-9 debug">
+              Conversaciones {{ currentChatRoom.name }}
+            </div>
+            <div class="col-sm-3 text-center debug">
+              <q-btn
+                :flat="canShowStartNewChat !== false"
+                label="Nuevo"
+                color="primary"
+                size="sm"
+                inverse
+                padding="xs"
+                @click="toggleStartNewChat(!canShowStartNewChat)"
+              >
+                &nbsp;<q-icon name="fas fa-plus-circle"  />
+              </q-btn>
+            </div>
+          </div>
           <div class="q-pa-md" style="max-width: 350px">
             <q-list bordered separator>
-              <q-item clickable v-ripple v-for="(cr, idx) in chatRooms" :key="idx" @click="setCurrentChatRoom(cr)">
+              <q-item
+                clickable
+                v-ripple
+                v-for="(cr, idx) in chatRooms"
+                :key="idx"
+                @click="setCurrentChatRoom(cr)"
+              >
                 <q-item-section>
                   <span style="font-weight:bold;">{{ cr.name }}</span>
                 </q-item-section>
@@ -23,28 +47,36 @@
             </q-list>
           </div>
         </div>
-        <div class="col-sm-7 debug">
-          <ul>
-            <li v-for="(msg, idx) in chatMessages" :key="idx">
-              <span style="font-weight:bold;">{{ msg.userId}}: </span><span>{{ msg.text}}</span>
-            </li>
-          </ul>
-          <br>
-          <br>
-          <template v-if="currentChatRoom._id">
-            <q-input v-model="messageText" type="text" label="Label" />
-            <q-btn color="primary" icon="check" label="Enviar" @click="onClickSendMessage" />
+        <!-- CONTENT -->
+        <div class="col-sm-9 debug">
+          <template v-if="canShowStartNewChat">
+            <start-new-chat
+              @reloadChats="getAllChatRooms"
+              @setNewChat="setCurrentChatRoom($event)"
+              @cancelStartNewChat="canShowStartNewChat = false"
+
+            />
           </template>
           <template v-else>
-            <span>Por favor seleccione una sala</span>
+            <pre>{{ currentChatRoom.name }}</pre>
+            <template v-if="currentChatRoom._id">
+              <ul class="debug-green">
+                <li v-for="(msg, idx) in chatMessages" :key="idx">
+                  <span style="font-weight:bold;">{{ msg.userId }}: </span>
+                  <span>{{ msg.text}}</span>
+                </li>
+              </ul>
+              <br>
+              <br>
+              <q-input v-model="messageText" type="text" label="Label" />
+              <q-btn color="primary" icon="check" label="Enviar" @click="onClickSendMessage" />
+            </template>
+            <template v-else>
+              <span>Por favor seleccione una sala</span>
+            </template>
           </template>
         </div>
       </div>
-
-      <start-new-chat-modal
-        :show="canShowStartRoomModal"
-        @close="toggleStartRoomModal(false)"
-      />
     </q-page-container>
   </q-layout>
 </template>
@@ -55,13 +87,14 @@ import { useAuthStore } from 'src/stores/use-auth-store'
 import { io } from 'socket.io-client'
 import { $notify } from 'src/commons/utils'
 import api from 'src/api'
-import StartNewChatModal from 'src/components/StartNewChatModal.vue'
+import StartNewChat from 'src/components/StartNewChat.vue'
+import { Room } from 'src/core/types/types'
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'Index',
   components: {
-    StartNewChatModal
+    StartNewChat
   },
   setup() {
     const { removeStoken } = useAuthStore()
@@ -70,11 +103,11 @@ export default defineComponent({
     const chatMessages = ref([])
     const messageText = ref('')
     const chatRooms = ref([])
-    const canShowStartRoomModal = ref(false)
+    const canShowStartNewChat = ref(false)
     let currentChatRoom = reactive({
       _id: null,
-      name: null,
-      roomId: null
+      name: null
+      // roomId: null
     })
 
     const socket = io(process.env.API_WS, {
@@ -115,7 +148,6 @@ export default defineComponent({
       if (chatRooms.value) {
         chatRooms.value.forEach(cr => {
           socket.on('loadMessagesFromRoom' + cr._id, (messages) => {
-            console.log(cr._id, messages)
             if (messages) {
               chatMessages.value = messages
             }
@@ -125,7 +157,7 @@ export default defineComponent({
     }
     getAllChatRooms()
 
-    const setCurrentChatRoom = (room: object) => {
+    const setCurrentChatRoom = (room: Room) => {
       Object.assign(currentChatRoom, room)
       loadRoomMessage()
     }
@@ -135,8 +167,8 @@ export default defineComponent({
       storeUser(user)
     } */
 
-    const toggleStartRoomModal = (show: boolean) => {
-      canShowStartRoomModal.value = show
+    const toggleStartNewChat = (show: boolean) => {
+      canShowStartNewChat.value = show
     }
 
     const onClickLogout = () => {
@@ -153,9 +185,9 @@ export default defineComponent({
       currentChatRoom,
       setCurrentChatRoom,
       onClickLogout,
-      // Start room
-      canShowStartRoomModal,
-      toggleStartRoomModal
+      toggleStartNewChat,
+      canShowStartNewChat,
+      getAllChatRooms
     }
   }
 })
